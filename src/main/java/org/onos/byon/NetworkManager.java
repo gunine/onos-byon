@@ -128,6 +128,7 @@ public class NetworkManager
         /*
          * TODO Lab 4: Remove the intents when the network is deleted
          */
+        removeIntents(network, null);
 
     }
 
@@ -168,6 +169,10 @@ public class NetworkManager
          * TODO Lab 4: Remove the host's intents from the network
          */
         boolean hostWasRemoved = store.removeHost(network, hostId);
+
+        if (hostWasRemoved) {
+            removeIntents(network, hostId);
+        }
 
     }
 
@@ -225,6 +230,8 @@ public class NetworkManager
          * 3. Withdrawn intentService.withdraw()
          */
 
+        Iterables.filter(intentService.getIntents(), i -> matches(network, hostId, i))
+                .forEach(intentService::withdraw);
     }
 
     /**
