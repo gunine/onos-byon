@@ -152,6 +152,10 @@ public class NetworkManager
          */
         boolean hostWasAdded = store.addHost(network, hostId);
 
+        if (hostWasAdded) {
+            addIntents(network, hostId, store.getHosts(network));
+        }
+
     }
 
     @Override
@@ -193,6 +197,17 @@ public class NetworkManager
          * 3. Submit the intents using intentService.submit()
          */
 
+        hostsInNet.forEach(dst -> {
+            if (!src.equals(dst)) {
+                Intent intent = HostToHostIntent.builder()
+                        .appId(appId)
+                        .key(generateKey(network, src, dst))
+                        .one(src)
+                        .two(dst)
+                        .build();
+                intentService.submit(intent);
+            }
+        });
     }
 
     /**
